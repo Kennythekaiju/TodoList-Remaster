@@ -10,3 +10,39 @@
     import 'relative/path/to/stylesheet.scss';
 
 */
+.todoDelete{
+    opacity: 0;
+    margin-right: 5px;
+}
+li:hover>.todoDelete{
+    opacity: 5;
+    color: black;
+}
+.inputBox{
+    width:400px;
+    text-align: center;
+}
+.headerBox{
+    text-align: center;
+}
+.list-group-item{
+    width:400px;
+    text-align:left;
+}
+.listDiv{
+    display:inline-block;
+    background: #fff;
+    box-shadow:
+      0 1px 1px rgba(0,0,0,0.15),
+      0 10px 0 -5px #eee,
+      0 10px 1px -4px rgba(0,0,0,0.15),
+      0 20px 0 -10px #eee,
+      0 20px 1px -9px rgba(0,0,0,0.15);
+}
+.inputBox{
+    display:inline-block;
+}
+.mainContent{
+    text-align: center;
+    margin:auto;
+}
