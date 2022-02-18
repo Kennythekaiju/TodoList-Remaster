@@ -1,25 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //include images into your bundle
 
 //create your first component
 const TodoList = () => {
-	const [todos, setTodos] = useState([]);
+	const [list, setList] = useState([]);
+	const [task, setTask] = useState("");
 	const [input, setInput] = useState("");
 
-	//function for handling the enter event for Todolist
-	const handleInput = (e) => {
-		if (e.code === "Enter") {
-			e.preventDefault();
+	const getAllTodos = async function () {
+		const options = {
+			method: "GET",
+		};
+		const response = await fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/KaijuTodo",
+			options
+		);
+		setList(await response.json());
+	};
 
-			setTodos([...todos, e.target.value]); //concats old todos with the user input; modifying todos to new todo state
-			setInput("");
+	useEffect(() => {
+		getAllTodos();
+	}, []);
+
+	const saveTodos = async (newTodos) => {
+		const options = {
+			method: "PUT",
+			body: JSON.stringify(newTodos),
+			headers: { "content-type": "application/json" },
+		};
+		const response = await fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/KaijuTodo",
+			options
+		);
+	};
+	//function for handling the enter event for Todolist
+	const handleInput = (pressedKey) => {
+		if (pressedKey.keyCode == 13) {
+			if (input.trim() === "") {
+				alert("Sorry, add task please.");
+				setInput("");
+			} else {
+				setTask(pressedKey.target.value);
+				setList([...list, { label: task, done: false }]);
+				setTask("");
+				setInput("");
+				saveTodos([...list, { label: task, done: false }]);
+			}
 		}
 	};
 	//filter functionality, pass all todos that are not equal to that item
-	const deleter = (todo) => {
-		let filteredTodos = todos.filter((item) => item != todo);
-		setTodos(filteredTodos);
+	const deleter = (task) => {
+		let filteredTasks = list.filter((item) => item != task);
+		setList(filteredTasks);
+		saveTodos(filteredTasks);
 	};
 
 	return (
@@ -30,41 +64,42 @@ const TodoList = () => {
 					<input
 						className="form-control"
 						type="text"
+						value={input}
 						placeholder={
-							todos.length === 0
+							list.length === 0
 								? "No tasks, add a task"
 								: "What needs to be done?"
-						} //conditional rendering
-						onChange={(event) => setInput(event.target.value)} //need more understanding
-						onKeyDown={(e) => {
-							handleInput(e);
-						}}
-						value={input}
-					/>
+						}
+						onKeyDown={(keyDown) => handleInput(keyDown)}
+						onChange={(inputKeyPress) => {
+							setTask(inputKeyPress.target.value);
+							setInput(inputKeyPress.target.value);
+						}}></input>
 				</div>
 
 				<div className="w-100 h-100">
 					<ul className="list-group">
-						{todos.map((singleTodo, i) => {
+						{list.map((singleTask, i) => {
 							return (
 								<li
 									className="d-flex justify-content-between ps-5 py-2 text-muted fw-light fs-5"
 									key={i}>
-									{singleTodo}{" "}
+									{singleTask.label}
 									<div
-										onClick={() => deleter(singleTodo)}
+										onClick={() => deleter(singleTask)}
 										style={{ cursor: "pointer" }}
 										className="todoDelete">
-										X
+										x
 									</div>{" "}
 								</li> //When icon is clicked (deleter function is ran), all todos are returned except the singleTodo passed to the function
 							);
 						})}
 					</ul>
+
 					<div className="ps-3 py-2 fw-light text-start" id="footer">
 						<span id="footerText">
-							{todos.length}{" "}
-							{todos.length === 1 ? "item" : "items"} left
+							{list.length} {list.length === 1 ? "item" : "items"}{" "}
+							left
 						</span>
 					</div>
 				</div>
