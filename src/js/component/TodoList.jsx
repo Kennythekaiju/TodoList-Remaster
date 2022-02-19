@@ -8,7 +8,49 @@ const TodoList = () => {
 	const [task, setTask] = useState("");
 	const [input, setInput] = useState("");
 
-	const getAllTodos = async function () {
+	// const getAllTodos = async function () {
+	// 	const options = {
+	// 		method: "GET",
+	// 	};
+	// 	const response = await fetch(
+	// 		"https://assets.breatheco.de/apis/fake/todos/user/KaijuTodo",
+	// 		options
+	// 	);
+	// 	setList(await response.json());
+	// 	console.log(response);
+	// };
+
+	// useEffect(() => {
+	// 	getAllTodos();
+	// }, []);
+
+	// const saveTodos = async (newTodos) => {
+	// 	const options = {
+	// 		method: "PUT",
+	// 		body: JSON.stringify(newTodos),
+	// 		headers: { "content-type": "application/json" },
+	// 	};
+	// 	const response = await fetch(
+	// 		"https://assets.breatheco.de/apis/fake/todos/user/KaijuTodo",
+	// 		options
+
+	// 	);
+	// };
+	//function for handling the enter event for Todolist
+	const handleInput = (pressedKey) => {
+		if (pressedKey.keyCode == 13) {
+			if (input.trim() === "") {
+				alert("Sorry, add task please.");
+				setInput("");
+			} else {
+				setList([...list, { label: task, done: false }]);
+				setTask("");
+				setInput("");
+				saveTodos([...list, { label: task, done: false }]);
+			}
+		}
+	};
+	const getTodos = async () => {
 		const options = {
 			method: "GET",
 		};
@@ -20,10 +62,11 @@ const TodoList = () => {
 	};
 
 	useEffect(() => {
-		getAllTodos();
+		getTodos();
 	}, []);
 
 	const saveTodos = async (newTodos) => {
+		console.log(newTodos);
 		const options = {
 			method: "PUT",
 			body: JSON.stringify(newTodos),
@@ -33,28 +76,14 @@ const TodoList = () => {
 			"https://assets.breatheco.de/apis/fake/todos/user/KaijuTodo",
 			options
 		);
-	};
-	//function for handling the enter event for Todolist
-	const handleInput = (pressedKey) => {
-		if (pressedKey.keyCode == 13) {
-			if (input.trim() === "") {
-				alert("Sorry, add task please.");
-				setInput("");
-			} else {
-				setTask(pressedKey.target.value);
-				setList([...list, { label: task, done: false }]);
-				setTask("");
-				setInput("");
-				saveTodos([...list, { label: task, done: false }]);
-			}
-		}
+		return response;
 	};
 	//filter functionality, pass all todos that are not equal to that item
-	const deleter = (task) => {
-		let filteredTasks = list.filter((item) => item != task);
-		setList(filteredTasks);
-		saveTodos(filteredTasks);
-	};
+	// const deleter = (task) => {
+	// 	let filteredTasks = list.filter((item) => item != task);
+	// 	setList(filteredTasks);
+	// 	saveTodos([...filteredTasks, { label: task, done: false }]);
+	// };
 
 	return (
 		<div className="mainContent">
@@ -86,8 +115,19 @@ const TodoList = () => {
 									key={i}>
 									{singleTask.label}
 									<div
-										onClick={() => deleter(singleTask)}
 										style={{ cursor: "pointer" }}
+										onClick={() => {
+											setList(
+												list.filter(
+													(_item, p) => p !== i
+												)
+											);
+											saveTodos(
+												list.filter(
+													(_item, p) => p !== i
+												)
+											);
+										}}
 										className="todoDelete">
 										x
 									</div>{" "}

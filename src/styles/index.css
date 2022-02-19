@@ -46,3 +46,4 @@ li:hover>.todoDelete{
     text-align: center;
     margin:auto;
 }
+ul>li:first { display: none; }
